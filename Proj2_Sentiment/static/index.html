@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sentiment Analysis</title>
+    <!-- Nhập font chữ hiện đại Inter từ Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-color: #0f172a;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 560px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h2 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 14px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            box-sizing: border-box;
+            resize: vertical;
+            transition: all 0.2s ease;
+            outline: none;
+            background-color: #f8fafc;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* Khung kết quả */
+        .result-card {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #f8fafc;
+            display: none;
+            /* Mặc định ẩn khi chưa có kết quả */
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .result-card.active {
+            display: block;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Badge cảm xúc */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .badge.positive {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge.negative {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge.neutral {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* Thanh tiến trình độ tin cậy */
+        .progress-bar-container {
+            width: 140px;
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .model-name {
+            font-family: monospace;
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #334155;
+        }
+
+        .error-message {
+            color: #b91c1c;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Hiệu ứng Spinner Loading */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Phân tích cảm xúc văn bản</h2>
+            <p>Hệ thống AI ứng dụng mô hình DistilBERT thông minh</p>
+        </div>
+
+        <form id="sentiment-form">
+            <div class="form-group">
+                <label for="text-input">Nội dung văn bản</label>
+                <textarea id="text-input"
+                    placeholder="Nhập cảm nghĩ, đánh giá hoặc nội dung bạn muốn phân tích..."></textarea>
+            </div>
+            <button type="submit" id="submit-btn">
+                <span>Phân tích ngay</span>
+            </button>
+        </form>
+
+        <!-- Khung hiển thị kết quả động -->
+        <div id="result-card" class="result-card">
+            <div class="result-item">
+                <span class="result-label">Cảm xúc dự đoán</span>
+                <span id="res-sentiment" class="badge">--</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Độ tin cậy</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span id="res-confidence-text" style="font-weight: 600; font-size: 13px;">--%</span>
+                    <div class="progress-bar-container">
+                        <div id="res-progress" class="progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="result-item" style="margin-top: 15px; border-top: 1px dashed var(--border); padding-top: 12px;">
+                <span class="result-label">Mô hình AI</span>
+                <span id="res-model" class="model-name">--</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('sentiment-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const textInput = document.getElementById('text-input');
+            const submitBtn = document.getElementById('submit-btn');
+            const resultCard = document.getElementById('result-card');
+
+            const text = textInput.value;
+
+            // Kiểm tra đầu vào trống
+            if (!text.trim()) {
+                resultCard.className = 'result-card active';
+                resultCard.innerHTML = '<div class="error-message">⚠️ Vui lòng nhập nội dung văn bản cần phân tích!</div>';
+                return;
+            }
+
+            // Chuyển nút sang trạng thái Loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="spinner"></div> Đang phân tích...';
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.detail || 'Lỗi hệ thống');
+                }
+
+                const data = await response.json();
+
+                // Xử lý hiển thị badge cảm xúc kèm class màu tương ứng
+                let badgeClass = 'neutral';
+                let sentimentText = data.sentiment;
+                if (data.sentiment.toLowerCase() === 'positive') {
+                    badgeClass = 'positive';
+                    sentimentText = 'Tích cực (Positive)';
+                } else if (data.sentiment.toLowerCase() === 'negative') {
+                    badgeClass = 'negative';
+                    sentimentText = 'Tiêu cực (Negative)';
+                } else {
+                    sentimentText = 'Trung tính (Neutral)';
+                }
+
+                // Tính phần trăm độ tin cậy
+                const confidencePercent = (data.confidence * 100).toFixed(1);
+
+                // Đổ dữ liệu vào giao diện kết quả
+                resultCard.className = 'result-card active';
+                resultCard.innerHTML = `
+                    <div class="result-item">
+                        <span class="result-label">Cảm xúc dự đoán</span>
+                        <span class="badge ${badgeClass}">${sentimentText}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Độ tin cậy</span>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-weight: 600; font-size: 13px;">${confidencePercent}%</span>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: ${confidencePercent}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-item" style="margin-top: 15px; border-top: 1px dashed var(--border); padding-top: 12px;">
+                        <span class="result-label">Mô hình AI</span>
+                        <span class="model-name">${data.model}</span>
+                    </div>
+                `;
+            } catch (error) {
+                resultCard.className = 'result-card active';
+                resultCard.innerHTML = `<div class="error-message">❌ Lỗi: ${error.message}</div>`;
+            } finally {
+                // Khôi phục lại trạng thái nút bấm
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>Phân tích ngay</span>';
+            }
+        });
+    </script>
+</body>
+
+</html>
