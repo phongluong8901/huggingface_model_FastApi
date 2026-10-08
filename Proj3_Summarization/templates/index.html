@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tóm tắt Hội thoại T5 (SAMSum)</title>
+    <!-- Nhúng Bootstrap 5 CSS để giao diện đẹp và responsive -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #f1f3f5;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card p-4">
+                    <h2 class="text-center mb-4 text-primary">🤖 Tóm tắt Hội thoại AI (T5)</h2>
+
+                    <!-- Form nhập liệu -->
+                    <div class="mb-3">
+                        <label for="dialogueInput" class="form-label fw-bold">Nhập đoạn hội thoại (Dialogue):</label>
+                        <textarea class="form-control" id="dialogueInput" rows="8" placeholder="Ví dụ:
+Alex: Hey Sarah, how is the weather looking...
+Sarah: Ugh, it's terrible!"></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button id="submitBtn" class="btn btn-primary btn-lg" onclick="summarizeDialogue()">
+                            Tóm tắt ngay
+                        </button>
+                    </div>
+
+                    <!-- Khu vực hiển thị kết quả -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Kết quả tóm tắt (Summary):</label>
+                        <div id="loading" class="text-center text-muted d-none mb-2">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            Đang xử lý, vui lòng đợi...
+                        </div>
+                        <pre id="resultOutput" class="text-dark">Bản tóm tắt sẽ hiển thị ở đây sau khi bấm nút...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script xử lý gọi API FastAPI -->
+    <script>
+        async function summarizeDialogue() {
+            const dialogueText = document.getElementById('dialogueInput').value.trim();
+            const resultOutput = document.getElementById('resultOutput');
+            const loading = document.getElementById('loading');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (!dialogueText) {
+                alert('Vui lòng nhập nội dung đoạn hội thoại!');
+                return;
+            }
+
+            // Hiển thị trạng thái loading
+            loading.classList.remove('d-none');
+            resultOutput.textContent = '';
+            submitBtn.disabled = true;
+
+            try {
+                // ĐÃ SỬA: Đổi từ '/api/summarize' thành '/summarize' cho khớp với FastAPI
+                const response = await fetch('/summarize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ dialogue: dialogueText })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Đã xảy ra lỗi khi kết nối tới server.');
+                }
+
+                const data = await response.json();
+
+                // Hiển thị kết quả trả về từ server
+                resultOutput.textContent = data.summary || data.result || JSON.stringify(data);
+
+            } catch (error) {
+                resultOutput.textContent = 'Lỗi: ' + error.message;
+            } finally {
+                // Tắt trạng thái loading
+                loading.classList.add('d-none');
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>
