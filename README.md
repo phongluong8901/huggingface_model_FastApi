@@ -20,3 +20,8 @@
 
 <img width="987" height="894" alt="image" src="https://github.com/user-attachments/assets/5f9c2ffb-61b7-4d90-b18d-a1f50603bb80" />
 <img width="1026" height="920" alt="image" src="https://github.com/user-attachments/assets/4af0d2bd-2393-4c82-a412-4284a91e1328" />
+
+6. Intent Predict
+
+<img width="1056" height="740" alt="image" src="https://github.com/user-attachments/assets/f80d7162-4385-4a52-82eb-2e1e7082ba10" />
+<img width="956" height="869" alt="image" src="https://github.com/user-attachments/assets/323468a4-16f6-4d31-97b7-71e513a63433" />
