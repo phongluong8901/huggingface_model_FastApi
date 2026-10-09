@@ -24,12 +24,19 @@ https://www.youtube.com/watch?v=luJ64trcCwc&t=68s
 https://www.youtube.com/watch?v=ssvy7kI9Q58&t=1s
 https://www.youtube.com/watch?v=rjGUPx1bxx4
 https://www.youtube.com/watch?v=QEdnILiSSgU&t=2857s
-
 https://www.youtube.com/watch?v=alEWyPecBus
 https://www.youtube.com/watch?v=IvHroh4XB9A
+
 https://www.youtube.com/watch?v=uij2RWg79bo
 https://www.youtube.com/watch?v=KuXPX7_Uc4g
 https://www.youtube.com/watch?v=5Of7Vy43HKE&list=PLdF3rLdF4ICQ4-fSEucMqoqMz1tEyjp9q&index=44
+
+9.nang cap
+- ML scikitlearn
+https://www.youtube.com/watch?v=XPl_6KI8Dts&list=PLdF3rLdF4ICQZWqrFYTutbuqHSc_swn7H&index=2
+
+- Ai-ML
+https://www.youtube.com/watch?v=gko4WnAgzz4&list=PLdF3rLdF4ICQZWqrFYTutbuqHSc_swn7H&index=4
 
 
 7. MLops course
@@ -43,6 +50,8 @@ https://www.youtube.com/watch?v=mnUwMDfjKGs
 3. computervsion
 https://www.youtube.com/watch?v=QqVahw9tBfw&t=16s 
 https://www.youtube.com/watch?v=8BhC6weFjTo&list=PL_CM1QjP-J9tTjFMxAhsNgbfLUXBx65I-&index=23
+http://youtube.com/watch?v=V51VkGNG_DE&list=PLdF3rLdF4ICQ92Su6Tg-S6tOuxO32NgWs&index=15
+https://www.youtube.com/watch?v=GdmuW7KJ5UU&list=PLdF3rLdF4ICQgPC9q-fD7LKqiDSKBoGH6&index=47
 
 4. tflite
 https://www.youtube.com/watch?v=OJnaBhCixng

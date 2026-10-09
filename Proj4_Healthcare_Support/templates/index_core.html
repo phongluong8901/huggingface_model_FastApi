@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        /* Chatbot Icon */
+        #chatbot-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #007bff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Chat Window */
+        #chat-window {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 500px;
+            max-height: 800px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #chat-header {
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        #chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        #chat-input input {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+        }
+
+        #chat-input button {
+            margin-left: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center; margin-top:10%;font-size:45px; color:red;">HealthCare Customer Support Chatbot</h1>
+    <!-- Chatbot Icon -->
+    <div id="chatbot-icon">💬</div>
+
+    <!-- Chat Window -->
+    <div id="chat-window">
+        <div id="chat-header">Customer Support</div>
+        <div id="chat-messages"></div>
+        <div id="chat-input">
+            <input type="text" id="user-message" placeholder="Type your message...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Toggle chat window
+        // .addEventListener('click', () => { ... }): Lắng nghe sự kiện người dùng bấm chuột (click) vào phần tử đó. Khi sự kiện click xảy ra, hàm mũi tên (() => { ... }) bên trong sẽ được thực thi.
+        document.getElementById('chatbot-icon').addEventListener('click', () => {
+            const chatWindow = document.getElementById('chat-window');
+            // Nếu khung chat đang ẩn ('none'): nó sẽ chuyển thành hiển thị với kiểu dàn trang linh hoạt ('flex'). 
+            // Ngược lại, nếu nó đang hiển thị ('flex'), nó sẽ chuyển thành ẩn ('none').
+            chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
+        });
+
+        // Handle message sending
+        // document.getElementById('send-button'): Tìm kiếm nút bấm có id là send-button trong trang web.
+        // .addEventListener('click', ...): Lắng nghe hành động người dùng bấm chuột vào nút này.
+        // async () => {: Định nghĩa một hàm mũi tuyến bất đồng bộ (async), cho phép sử dụng từ khóa await bên trong để chờ dữ liệu phản hồi từ máy chủ mà không làm đơ giao diện.
+        document.getElementById('send-button').addEventListener('click', async () => {
+            //Lấy giá trị văn bản (.value) mà người dùng đã gõ vào ô nhập liệu có id là user-message và lưu vào hằng số userMessage.
+            const userMessage = document.getElementById('user-message').value;
+            if (!userMessage) return; //Kiểm tra nếu userMessage đang rỗng (hoặc chỉ có khoảng trắng), lệnh return sẽ kích hoạt để dừng lại ngay lập tức, tránh việc gửi tin nhắn trống lên hệ thống.
+
+            // Tìm khung chứa toàn bộ các bong bóng chat (id là chat-messages) để chuẩn bị thêm tin nhắn mới vào đây.
+            const chatMessages = document.getElementById('chat-messages');
+
+            // Add user's message
+            const userBubble = document.createElement('div'); //document.createElement('div'): Tạo ra một thẻ div mới trong HTML để làm "bong bóng" chứa tin nhắn.
+            userBubble.textContent = `You: ${userMessage}`; //Gán nội dung hiển thị bên trong thẻ div đó theo định dạng You: [nội dung bạn vừa gõ].
+            chatMessages.appendChild(userBubble); //Đưa thẻ div vừa tạo vào bên trong khung hiển thị tin nhắn để nó xuất hiện trên màn hình.
+
+            // Call backend API
+            //await fetch('/chat', ...): Dùng hàm fetch để gửi một yêu cầu HTTP đến đường dẫn API /chat của server. Từ khóa await bắt buộc JavaScript phải chờ đến khi server xử lý xong và trả về kết quả rồi mới chạy tiếp các dòng sau.
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }, //Báo cho server biết dữ liệu gửi đi có định dạng là JSON.
+                body: JSON.stringify({ message: userMessage }) //Đóng gói nội dung tin nhắn của bạn thành một chuỗi JSON (ví dụ: {"Xin chào chatbot"}) để truyền đi trong phần thân của yêu cầu.
+            });
+            //Chuyển đổi phản hồi nhận được từ server (response) thành một đối tượng JavaScript (JSON) để dễ dàng lấy ra dữ liệu (data.response).
+            const data = await response.json();
+
+            // Add bot's response
+            //div mới (botBubble), gán nội dung câu trả lời của bot lấy từ server (data.response), rồi gắn nó vào khung chat (chatMessages).
+            const botBubble = document.createElement('div');
+            botBubble.textContent = `Bot: ${data.response}`;
+            chatMessages.appendChild(botBubble);
+
+            // Scroll to bottom
+            // scrollTop = chatMessages.scrollHeight: Đẩy thanh cuộn của khung chat xuống vị trí thấp nhất. Điều này giúp người dùng luôn nhìn thấy tin nhắn mới nhất xuất hiện mà không cần phải tự kéo chuột thủ công.
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Clear input
+            // document.getElementById('user-message').value = '': Xóa nội dung trong ô nhập văn bản để giao diện sẵn sàng cho câu hỏi tiếp theo.
+            document.getElementById('user-message').value = '';
+        });
+    </script>
+</body>
+
+</html>
