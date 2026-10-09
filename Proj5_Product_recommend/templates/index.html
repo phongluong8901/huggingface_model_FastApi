@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart E-Commerce Product Recommendation</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+    <!-- FontAwesome icons cho icon kính lúp, giỏ hàng -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1e293b;
+        }
+
+        /* Header Styling */
+        .hero-section {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            border-radius: 1rem;
+            padding: 3rem 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Search Box Styling */
+        .search-container .form-control {
+            border-radius: 50rem 0 0 50rem;
+            padding: 0.85rem 1.5rem;
+            font-size: 1.05rem;
+            border: 2px solid #e2e8f0;
+            border-right: none;
+        }
+
+        .search-container .form-control:focus {
+            box-shadow: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-container .btn {
+            border-radius: 0 50rem 50rem 0;
+            padding: 0 2rem;
+            background-color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .search-container .btn:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        /* Card Styling */
+        .product-card {
+            border: none;
+            border-radius: 1rem;
+            background: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Image Wrapper to fix aspect ratio */
+        .card-img-wrapper {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .card-img-top {
+            transform: scale(1.08);
+        }
+
+        /* Similarity Badge */
+        .similarity-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 50rem;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.8rem;
+            color: #0f172a;
+        }
+
+        .meta-info {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .meta-info span {
+            font-weight: 600;
+            color: #334155;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container my-5">
+        <!-- Hero Header -->
+        <div class="hero-section text-center">
+            <h1 class="fw-bold mb-2"><i class="fa-solid fa-bag-shopping me-2"></i>Smart E-Commerce Search</h1>
+            <p class="lead opacity-75 mb-4">Tìm kiếm sản phẩm thông minh bằng trí tuệ nhân tạo & Vector Embeddings</p>
+
+            <!-- Search Form -->
+            <form method="POST" class="row justify-content-center">
+                <div class="col-md-8 search-container">
+                    <div class="input-group shadow-lg">
+                        <input type="text" class="form-control" name="query"
+                            placeholder="Ví dụ: wireless bluetooth headphones, running shoes..." required>
+                        <button class="btn text-white" type="submit">
+                            <i class="fa-solid fa-search me-1"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Recommendations Grid -->
+        {% if recommendations %}
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h4 class="fw-bold text-dark m-0"><i class="fa-solid fa-fire text-danger me-2"></i>Kết quả phù hợp nhất</h4>
+            <span class="text-muted small">Hiển thị {{ recommendations|length }} sản phẩm</span>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
+            {% for product in recommendations %}
+            <div class="col">
+                <div class="card product-card h-100">
+                    <div class="card-img-wrapper">
+                        <!-- Badge độ tương đồng dạng % -->
+                        <div class="similarity-badge">
+                            <i class="fa-solid fa-bolt me-1"></i>{{ "%.1f" | format(product.similarity * 100) }}%
+                        </div>
+                        <img src="{{ product.imgs[0] if product.imgs and product.imgs[0] else 'https://via.placeholder.com/300?text=No+Image' }}"
+                            class="card-img-top" alt="Product Image">
+                    </div>
+
+                    <div class="card-body d-flex flex-column justify-content-between p-3">
+                        <div>
+                            <h5 class="card-title" title="{{ product.title }}">{{ product.title }}</h5>
+                        </div>
+
+                        <div class="meta-info mt-2 pt-2 border-top">
+                            <div class="text-truncate mb-1">
+                                <i class="fa-solid fa-tag me-1 text-primary"></i><span>{{ product.category }}</span>
+                            </div>
+                            <div class="text-truncate">
+                                <i class="fa-solid fa-copyright me-1 text-success"></i><span>{{ product.brand }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% elif request.method == 'POST' %}
+        <div class="text-center py-5">
+            <p class="text-muted fs-5">Không tìm thấy sản phẩm phù hợp với từ khóa của bạn.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
