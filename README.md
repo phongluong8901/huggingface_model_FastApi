@@ -11,3 +11,7 @@
 
 <img width="1011" height="742" alt="image" src="https://github.com/user-attachments/assets/b1542ae2-47cf-4701-a49e-41d05594c2a3" />
 <img width="1023" height="655" alt="image" src="https://github.com/user-attachments/assets/dbe08def-315d-41da-9e39-0160c21f15ee" />
+
+4. Chatbot healthcare customer
+   
+<img width="1022" height="777" alt="image" src="https://github.com/user-attachments/assets/e78ccbf4-3c5a-4741-8144-430970a07d57" />
