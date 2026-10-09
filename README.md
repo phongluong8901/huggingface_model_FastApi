@@ -15,3 +15,8 @@
 4. Chatbot healthcare customer
    
 <img width="1022" height="777" alt="image" src="https://github.com/user-attachments/assets/e78ccbf4-3c5a-4741-8144-430970a07d57" />
+
+5. product recommend
+
+<img width="987" height="894" alt="image" src="https://github.com/user-attachments/assets/5f9c2ffb-61b7-4d90-b18d-a1f50603bb80" />
+<img width="1026" height="920" alt="image" src="https://github.com/user-attachments/assets/4af0d2bd-2393-4c82-a412-4284a91e1328" />
